@@ -1,0 +1,49 @@
+// Exemplo completo da Nova Language
+
+say "╔═══════════════════════════════════════════╗"
+say "║         Nova Language v0.2.0              ║"
+say "║         by MARCELINO MODZ                 ║"
+say "╚═══════════════════════════════════════════╝"
+say ""
+
+// Variáveis
+let nome = "Marcelino"
+let idade = 25
+let cidade = "Luanda"
+
+say "📝 Dados Pessoais:"
+say "Nome: " + nome
+say "Idade: " + idade
+say "Cidade: " + cidade
+say ""
+
+// Função
+func saudacao(nome, idade) {
+    if idade >= 18 {
+        return "Olá " + nome + "! Você é maior de idade"
+    }
+    return "Olá " + nome + "! Você é menor de idade"
+}
+
+say "👋 " + saudacao(nome, idade)
+say ""
+
+// Loop
+say "🔢 Contando até 5:"
+loop 5 {
+    say "Número: " + (loop_index + 1)
+}
+say ""
+
+// Operações
+let x = 10
+let y = 5
+let soma = x + y
+let mult = x * y
+
+say "📊 Operações:"
+say x + " + " + y + " = " + soma
+say x + " * " + y + " = " + mult
+say ""
+
+say "✅ Programa finalizado!"

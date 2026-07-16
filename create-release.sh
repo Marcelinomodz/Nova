@@ -2,58 +2,52 @@
 
 echo "📦 Criando release no GitHub..."
 
-# Compilar e criar pacote
-./create-package.sh
-
 # Verificar se o pacote existe
+if [ ! -f "nova-0.2.0.deb" ]; then
+    echo "📦 Criando pacote..."
+    ./create-deb-simple.sh
+fi
+
+# Verificar se o pacote foi criado
 if [ ! -f "nova-0.2.0.deb" ]; then
     echo "❌ Pacote não encontrado"
     exit 1
 fi
 
-# Instalar GitHub CLI
-if ! command -v gh &> /dev/null; then
-    echo "📦 Instalando GitHub CLI..."
-    pkg install gh -y 2>/dev/null || sudo apt install gh -y 2>/dev/null
-fi
+echo ""
+echo "📌 Agora crie a release manualmente:"
+echo ""
+echo "1. Acesse: https://github.com/Marcelinomodz/Nova/releases/new"
+echo ""
+echo "2. Preencha:"
+echo "   Tag: v0.2.0"
+echo "   Title: Nova Language v0.2.0 - by MARCELINO MODZ"
+echo ""
+echo "3. Descrição:"
+echo ""
+cat << 'DESC'
+🚀 Nova Language v0.2.0
 
-# Fazer login
-echo "🔑 Fazendo login no GitHub..."
-gh auth login
+Uma linguagem de programação simples, moderna e poderosa!
 
-# Criar release
-echo "📦 Criando release v0.2.0..."
-gh release create v0.2.0 \
-    --title "Nova Language v0.2.0" \
-    --notes "🚀 Nova Language by MARCELINO MODZ
-
-## Novidades
+## ✨ Características
 - ✅ Linguagem independente (sem Node.js)
 - ✅ Binário nativo em C++
-- ✅ Instalação via pkg
-- ✅ Suporte a Termux
+- ✅ Suporte a Termux e Linux
+- ✅ Pacote .deb para instalação fácil
+- ✅ Sintaxe simples e intuitiva
+- ✅ Funções, loops, condicionais
 - ✅ Exemplos inclusos
 
-## Instalação
-\`\`\`bash
-pkg install nova
-# ou
-dpkg -i nova-0.2.0.deb
-\`\`\`
+## 📦 Instalação
 
-## Comandos
-\`\`\`bash
-nova --help
+### Termux/Android
+```bash
+# Baixar o pacote
+curl -L -o nova.deb https://github.com/Marcelinomodz/Nova/releases/latest/download/nova-0.2.0.deb
+
+# Instalar
+dpkg -i nova.deb
+
+# Verificar
 nova --version
-nova arquivo.nv
-\`\`\`" \
-    nova-0.2.0.deb
-
-if [ $? -eq 0 ]; then
-    echo "✅ Release criado com sucesso!"
-    echo ""
-    echo "📌 Link: https://github.com/marcelino/nova/releases"
-else
-    echo "❌ Erro ao criar release"
-    echo "Crie manualmente em: https://github.com/marcelino/nova/releases/new"
-fi
