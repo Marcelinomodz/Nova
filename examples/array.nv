@@ -1,0 +1,31 @@
+// Trabalhando com arrays
+
+let numeros = [1, 2, 3, 4, 5]
+let nomes = ["Ana", "João", "Pedro", "Maria"]
+
+say "=== Arrays em Nova ==="
+
+say "Números: " + numeros
+say "Nomes: " + nomes
+
+say "Primeiro número: " + numeros[0]
+say "Último nome: " + nomes[nomes.length - 1]
+
+// Adicionar elementos
+numeros.push(6)
+nomes.push("José")
+
+say "Números após push: " + numeros
+say "Nomes após push: " + nomes
+
+// Remover elementos
+let removido = numeros.pop()
+say "Removido: " + removido
+say "Números após pop: " + numeros
+
+// Loop com arrays
+say ""
+say "=== Listando nomes ==="
+loop nomes.length {
+    say (loop_index + 1) + ". " + nomes[loop_index]
+}

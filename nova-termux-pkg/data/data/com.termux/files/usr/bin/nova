@@ -1,0 +1,128 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const { Lexer } = require('../src/lexer');
+const { Parser } = require('../src/parser');
+const { Interpreter } = require('../src/interpreter');
+const { Compiler } = require('../src/compiler');
+const { VM } = require('../src/vm');
+const { Runtime } = require('../src/runtime');
+
+const args = process.argv.slice(2);
+
+if (args.length === 0) {
+  // Show welcome message
+  console.log(`
+╔═══════════════════════════════════════════╗
+║                                           ║
+║    ███╗   ██╗ ██████╗ ██╗   ██╗ █████╗   ║
+║    ████╗  ██║██╔═══██╗██║   ██║██╔══██╗  ║
+║    ██╔██╗ ██║██║   ██║██║   ██║███████║  ║
+║    ██║╚██╗██║██║   ██║╚██╗ ██╔╝██╔══██║  ║
+║    ██║ ╚████║╚██████╔╝ ╚████╔╝ ██║  ██║  ║
+║    ╚═╝  ╚═══╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝  ║
+║                                           ║
+║         Nova Language v0.2.0              ║
+║         by MARCELINO MODZ                 ║
+╚═══════════════════════════════════════════╝
+  `);
+  console.log('Usage: nova <file.nv> [options]');
+  console.log('Options:');
+  console.log('  --help       Show this help');
+  console.log('  --version    Show version');
+  console.log('  --ast        Show AST');
+  console.log('  --tokens     Show tokens');
+  console.log('  --bytecode   Compile to bytecode');
+  console.log('  --vm         Run with VM (experimental)');
+  console.log('  --mem        Show memory stats');
+  console.log('  --debug      Debug mode');
+  process.exit(0);
+}
+
+if (args[0] === '--help') {
+  console.log('Nova Language v0.2.0');
+  console.log('by MARCELINO MODZ');
+  console.log('Usage: nova <file.nv> [options]');
+  console.log('Options:');
+  console.log('  --help       Show this help');
+  console.log('  --version    Show version');
+  console.log('  --ast        Show AST');
+  console.log('  --tokens     Show tokens');
+  console.log('  --bytecode   Compile to bytecode');
+  console.log('  --vm         Run with VM (experimental)');
+  console.log('  --mem        Show memory stats');
+  console.log('  --debug      Debug mode');
+  process.exit(0);
+}
+
+if (args[0] === '--version') {
+  console.log('Nova Language v0.2.0');
+  console.log('by MARCELINO MODZ');
+  process.exit(0);
+}
+
+const filename = args[0];
+const showTokens = args.includes('--tokens');
+const showAST = args.includes('--ast');
+const showBytecode = args.includes('--bytecode');
+const useVM = args.includes('--vm');
+const showMem = args.includes('--mem');
+const debugMode = args.includes('--debug');
+
+try {
+  const code = fs.readFileSync(filename, 'utf8');
+  
+  // Lexer
+  const lexer = new Lexer(code);
+  const tokens = lexer.tokenize();
+  
+  if (showTokens) {
+    console.log('Tokens:', JSON.stringify(tokens, null, 2));
+  }
+  
+  // Parser
+  const parser = new Parser(tokens);
+  const ast = parser.parse();
+  
+  if (showAST) {
+    console.log('AST:', JSON.stringify(ast, null, 2));
+  }
+  
+  if (showBytecode || useVM) {
+    // Compile to bytecode
+    const compiler = new Compiler();
+    const program = compiler.compile(ast);
+    
+    if (showBytecode) {
+      console.log('Bytecode:', JSON.stringify(program, null, 2));
+    }
+    
+    if (useVM) {
+      // Run with VM (experimental)
+      console.warn('⚠️  VM is experimental, use interpreter for stable execution');
+      const vm = new VM();
+      vm.load(program);
+      vm.run();
+    }
+  } else {
+    // Run with interpreter (stable)
+    const interpreter = new Interpreter();
+    interpreter.interpret(ast);
+    
+    if (showMem) {
+      console.log('Memory Stats:', interpreter.getMemoryStats());
+    }
+    
+    if (debugMode) {
+      console.log('Output:', interpreter.getOutput());
+    }
+  }
+  
+} catch (error) {
+  console.error('Error:', error.message);
+  if (debugMode) {
+    console.error('Stack:', error.stack);
+  }
+  process.exit(1);
+}

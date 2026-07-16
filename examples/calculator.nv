@@ -1,0 +1,45 @@
+// Calculadora simples em Nova
+
+func soma(a, b) {
+    return a + b
+}
+
+func subtracao(a, b) {
+    return a - b
+}
+
+func multiplicacao(a, b) {
+    return a * b
+}
+
+func divisao(a, b) {
+    if b == 0 {
+        say "Erro: Divisão por zero!"
+        return 0
+    }
+    return a / b
+}
+
+// Testando a calculadora
+say "=== CALCULADORA NOVA ==="
+
+let x = 10
+let y = 5
+
+say "X = " + x
+say "Y = " + y
+say ""
+say "Soma: " + soma(x, y)
+say "Subtração: " + subtracao(x, y)
+say "Multiplicação: " + multiplicacao(x, y)
+say "Divisão: " + divisao(x, y)
+
+// Teste com outros valores
+say ""
+say "=== Teste 2 ==="
+let a = 100
+let b = 25
+say a + " + " + b + " = " + soma(a, b)
+say a + " - " + b + " = " + subtracao(a, b)
+say a + " * " + b + " = " + multiplicacao(a, b)
+say a + " / " + b + " = " + divisao(a, b)

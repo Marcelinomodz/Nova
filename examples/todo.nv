@@ -1,0 +1,44 @@
+// Lista de Tarefas
+
+let tarefas = []
+
+func adicionar_tarefa(tarefa) {
+    tarefas.push(tarefa)
+    say "Tarefa adicionada: " + tarefa
+}
+
+func listar_tarefas() {
+    say "=== Lista de Tarefas ==="
+    if tarefas.length == 0 {
+        say "Nenhuma tarefa cadastrada"
+    } else {
+        loop tarefas.length {
+            let index = loop_index
+            say (index + 1) + ". " + tarefas[index]
+        }
+    }
+}
+
+func remover_tarefa(index) {
+    if index >= 1 && index <= tarefas.length {
+        let removida = tarefas[index - 1]
+        tarefas.splice(index - 1, 1)
+        say "Tarefa removida: " + removida
+    } else {
+        say "Índice inválido!"
+    }
+}
+
+// Adicionando tarefas
+adicionar_tarefa("Estudar Nova")
+adicionar_tarefa("Fazer exercícios")
+adicionar_tarefa("Criar projetos")
+
+// Listando
+listar_tarefas()
+
+// Removendo
+remover_tarefa(2)
+
+// Listando novamente
+listar_tarefas()

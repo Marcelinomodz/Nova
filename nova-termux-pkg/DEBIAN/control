@@ -1,0 +1,8 @@
+Package: nova
+Version: 0.2.0
+Architecture: all
+Maintainer: MARCELINO MODZ
+Depends: nodejs (>= 12.0.0)
+Description: Nova Language - A simple and modern programming language
+ Homepage: https://github.com/marcelino/nova
+ License: MIT

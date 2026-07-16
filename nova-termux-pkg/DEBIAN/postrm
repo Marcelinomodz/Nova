@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "🗑️  Removendo Nova Language..."
+rm -rf /data/data/com.termux/files/usr/lib/node_modules/nova-lang
+rm -f /data/data/com.termux/files/usr/bin/nova
+echo "✅ Nova Language removido!"

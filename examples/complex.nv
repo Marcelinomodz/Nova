@@ -1,0 +1,48 @@
+// Teste de todas as funcionalidades
+
+// Variáveis
+let nome = "Nova"
+let versao = 0.2
+let ano = 2026
+
+say "Bem vindo ao " + nome + " v" + versao
+
+// Função
+func saudacao(nome, idade) {
+    if idade >= 18 {
+        say "Olá " + nome + "! Você é maior de idade"
+    } else {
+        say "Olá " + nome + "! Você é menor de idade"
+    }
+    return idade
+}
+
+// Loop
+loop 3 {
+    say "Teste loop " + versao
+}
+
+// Chamada de função
+let idade = 25
+saudacao("Marcelino", idade)
+
+// Operações
+let resultado = 10 * 20 + 5 - 3
+say "Resultado: " + resultado
+
+// Condição final
+if resultado > 100 {
+    say "Resultado é maior que 100"
+} else {
+    say "Resultado é menor ou igual a 100"
+}
+
+// Função com retorno
+func quadrado(x) {
+    return x * x
+}
+
+let q = quadrado(5)
+say "Quadrado de 5: " + q
+
+say "Programa finalizado!"

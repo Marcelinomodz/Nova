@@ -1,0 +1,23 @@
+// Verificador de Palíndromo
+
+func isPalindromo(texto) {
+    let tamanho = texto.length
+    let metade = tamanho / 2
+    
+    loop metade {
+        let i = loop_index
+        if texto[i] != texto[tamanho - 1 - i] {
+            return false
+        }
+    }
+    return true
+}
+
+let palavras = ["ana", "casa", "radar", "python", "arara", "linux"]
+
+say "=== Verificador de Palíndromo ==="
+loop palavras.length {
+    let palavra = palavras[loop_index]
+    let resultado = isPalindromo(palavra)
+    say palavra + " -> " + resultado
+}

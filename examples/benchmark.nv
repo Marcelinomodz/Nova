@@ -1,0 +1,41 @@
+// Benchmark da linguagem Nova
+
+func time() {
+    return Date.now()
+}
+
+func fibonacci(n) {
+    if n <= 1 {
+        return n
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2)
+}
+
+say "=== Benchmark Nova ==="
+
+let inicio = time()
+
+say "Calculando Fibonacci(20)..."
+let resultado = fibonacci(20)
+say "Resultado: " + resultado
+
+let fim = time()
+let tempo = fim - inicio
+
+say "Tempo: " + tempo + "ms"
+
+// Teste de loop
+say ""
+say "Teste de loop 1000 vezes..."
+inicio = time()
+
+let soma = 0
+loop 1000 {
+    soma = soma + loop_index
+}
+
+fim = time()
+tempo = fim - inicio
+
+say "Soma: " + soma
+say "Tempo: " + tempo + "ms"

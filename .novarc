@@ -1,0 +1,8 @@
+# Configuração do Nova
+{
+  "version": "0.2.0",
+  "mode": "ast",
+  "debug": false,
+  "memory_limit": 1024,
+  "optimization": "none"
+}

@@ -1,0 +1,44 @@
+// Exemplo de funções em Nova
+
+func soma(a, b) {
+    return a + b
+}
+
+func saudacao(nome) {
+    say "Olá " + nome
+}
+
+func multiplicar(a, b) {
+    return a * b
+}
+
+// Testando funções
+let resultado = soma(10, 20)
+say "Soma: " + resultado
+
+saudacao("Marcelino")
+
+let mult = multiplicar(5, 3)
+say "Multiplicação: " + mult
+
+// Função com múltiplos parâmetros
+func calcular(a, b, op) {
+    if op == "+" {
+        return a + b
+    }
+    if op == "-" {
+        return a - b
+    }
+    if op == "*" {
+        return a * b
+    }
+    if op == "/" {
+        return a / b
+    }
+    return 0
+}
+
+say "Calcular 10 + 5 = " + calcular(10, 5, "+")
+say "Calcular 10 - 5 = " + calcular(10, 5, "-")
+say "Calcular 10 * 5 = " + calcular(10, 5, "*")
+say "Calcular 10 / 5 = " + calcular(10, 5, "/")

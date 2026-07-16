@@ -1,0 +1,16 @@
+// Cálculo de Fatorial
+
+func fatorial(n) {
+    if n <= 1 {
+        return 1
+    }
+    return n * fatorial(n - 1)
+}
+
+say "Fatorial de 5: " + fatorial(5)
+say "Fatorial de 10: " + fatorial(10)
+
+loop 6 {
+    let n = loop_index + 1
+    say "Fatorial de " + n + " = " + fatorial(n)
+}

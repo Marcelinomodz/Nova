@@ -1,0 +1,8 @@
+let nome = "Marcelino"
+say nome
+
+let idade = 15
+say idade
+
+let resultado = 10 + 20
+say resultado

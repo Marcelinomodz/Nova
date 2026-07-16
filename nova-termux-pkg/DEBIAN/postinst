@@ -1,0 +1,12 @@
+#!/bin/bash
+echo "🚀 Instalando Nova Language by MARCELINO MODZ..."
+cd /data/data/com.termux/files/usr/lib/node_modules/nova-lang
+npm install --production 2>/dev/null || true
+chmod +x /data/data/com.termux/files/usr/bin/nova
+echo "✅ Nova Language instalado com sucesso!"
+echo ""
+echo "Versão: $(nova --version 2>/dev/null || echo 'v0.2.0')"
+echo ""
+echo "Exemplo:"
+echo "  echo 'say \"Olá Mundo\"' > hello.nv"
+echo "  nova hello.nv"
