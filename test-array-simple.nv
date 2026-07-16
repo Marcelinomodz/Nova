@@ -1,0 +1,15 @@
+say "=== Arrays Funcionando ==="
+let numeros = [1, 2, 3, 4, 5]
+say "Array: " + numeros
+say "Primeiro: " + numeros[0]
+say "Último: " + numeros[4]
+say "Tamanho: " + 5
+
+say ""
+say "=== Loop com Array ==="
+loop 5 {
+    say numeros[loop_index]
+}
+
+say ""
+say "✅ Arrays funcionando!"

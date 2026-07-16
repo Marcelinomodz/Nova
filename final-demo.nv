@@ -1,0 +1,44 @@
+// Nova Language - Demo Final
+
+say "╔═══════════════════════════════════════════╗"
+say "║                                           ║"
+say "║    ███╗   ██╗ ██████╗ ██╗   ██╗ █████╗   ║"
+say "║    ████╗  ██║██╔═══██╗██║   ██║██╔══██╗  ║"
+say "║    ██╔██╗ ██║██║   ██║██║   ██║███████║  ║"
+say "║    ██║╚██╗██║██║   ██║╚██╗ ██╔╝██╔══██║  ║"
+say "║    ██║ ╚████║╚██████╔╝ ╚████╔╝ ██║  ██║  ║"
+say "║    ╚═╝  ╚═══╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝  ║"
+say "║                                           ║"
+say "║         Nova Language v0.2.0              ║"
+say "║         by MARCELINO MODZ                 ║"
+say "╚═══════════════════════════════════════════╝"
+say ""
+
+say "🚀 Nova Language está funcionando!"
+
+// Variáveis
+let nome = "Marcelino"
+let ano = 2026
+say ""
+say "📝 Criador: " + nome
+say "📅 Ano: " + ano
+
+// Função
+func saudacao(nome) {
+    return "Olá " + nome + "! Bem vindo ao Nova!"
+}
+
+say ""
+say "👋 " + saudacao(nome)
+
+// Loop
+say ""
+say "🔢 Contando:"
+loop 5 {
+    say "  " + (loop_index + 1)
+}
+
+say ""
+say "✅ Demo finalizada!"
+say ""
+say "🎉 by MARCELINO MODZ"

@@ -1,0 +1,21 @@
+say "=== Teste de Objetos ==="
+
+let usuario = {
+    nome: "Marcelino",
+    idade: 25,
+    cidade: "Luanda",
+    ativo: true
+}
+
+say "Nome: " + usuario.nome
+say "Idade: " + usuario.idade
+say "Cidade: " + usuario.cidade
+say "Ativo: " + usuario.ativo
+
+say ""
+say "=== Teste de Import ==="
+import "math"
+import "json"
+
+say ""
+say "✅ Teste concluído!"

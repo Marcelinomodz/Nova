@@ -1,0 +1,55 @@
+say "=== Teste de Comparadores ==="
+let a = 50
+let b = 25
+
+say "a = " + a
+say "b = " + b
+
+if a > b {
+    say "✅ a é maior que b"
+} else {
+    say "❌ a não é maior que b"
+}
+
+if a < b {
+    say "❌ a é menor que b"
+} else {
+    say "✅ a não é menor que b"
+}
+
+if a == b {
+    say "❌ a é igual a b"
+} else {
+    say "✅ a não é igual a b"
+}
+
+say ""
+say "=== Teste de Booleanos ==="
+let verdadeiro = true
+let falso = false
+
+say "verdadeiro: " + verdadeiro
+say "falso: " + falso
+
+if verdadeiro {
+    say "✅ Verdadeiro é true"
+}
+
+if !falso {
+    say "✅ Não falso é true"
+}
+
+say ""
+say "=== Teste de Operadores Lógicos ==="
+let x = 10
+let y = 20
+
+if x > 5 && y > 15 {
+    say "✅ x > 5 E y > 15"
+}
+
+if x > 15 || y > 15 {
+    say "✅ x > 15 OU y > 15"
+}
+
+say "✅ Teste concluído!"

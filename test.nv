@@ -1,0 +1,15 @@
+say "=== Teste de Variáveis ==="
+let nome = "Marcelino"
+let idade = 25
+say nome
+say idade
+
+say "=== Teste de Operações ==="
+let x = 10
+let y = 5
+say "Soma: " + (x + y)
+
+say "=== Teste de Loop ==="
+loop 3 {
+    say "Loop: " + loop_index
+}

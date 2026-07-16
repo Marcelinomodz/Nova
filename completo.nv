@@ -1,0 +1,41 @@
+say "╔═══════════════════════════════════════════╗"
+say "║                                           ║"
+say "║         Nova Language v0.2.0              ║"
+say "║         by MARCELINO MODZ                 ║"
+say "╚═══════════════════════════════════════════╝"
+
+say ""
+say "=== Teste 1: Variáveis ==="
+let nome = "Marcelino"
+let idade = 25
+let cidade = "Luanda"
+say "Nome: " + nome
+say "Idade: " + idade
+say "Cidade: " + cidade
+
+say ""
+say "=== Teste 2: Operações ==="
+let x = 10
+let y = 5
+let soma = x + y
+let mult = x * y
+say "Soma: " + soma
+say "Multiplicação: " + mult
+
+say ""
+say "=== Teste 3: Loop ==="
+loop 5 {
+    say "Loop: " + loop_index
+}
+
+say ""
+say "=== Teste 4: Condição ==="
+let idade2 = 18
+if idade2 >= 18 {
+    say "Maior de idade"
+} else {
+    say "Menor de idade"
+}
+
+say ""
+say "✅ Programa finalizado!"

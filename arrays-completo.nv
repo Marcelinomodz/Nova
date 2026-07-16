@@ -1,0 +1,30 @@
+say "=== Arrays em Nova ==="
+
+let numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+let nomes = ["Ana", "João", "Pedro", "Maria", "José"]
+
+say "Números: " + numeros
+say "Nomes: " + nomes
+
+say ""
+say "=== Acessando elementos ==="
+say "Primeiro número: " + numeros[0]
+say "Último número: " + numeros[9]
+say "Segundo nome: " + nomes[1]
+say "Último nome: " + nomes[4]
+
+say ""
+say "=== Loop com arrays ==="
+say "Lista de números:"
+loop 10 {
+    say "  " + numeros[loop_index]
+}
+
+say ""
+say "Lista de nomes:"
+loop 5 {
+    say "  " + nomes[loop_index]
+}
+
+say ""
+say "✅ Teste completo!"

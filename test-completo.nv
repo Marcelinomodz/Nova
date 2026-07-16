@@ -1,0 +1,59 @@
+say "╔═══════════════════════════════════════════╗"
+say "║         Nova Language v0.6.0              ║"
+say "║         by MARCELINO MODZ                 ║"
+say "╚═══════════════════════════════════════════╝"
+say ""
+
+say "=== 1. ARRAYS COM MÉTODOS ==="
+let numeros = [1, 2, 3]
+say "Array inicial: " + numeros
+
+numeros.push(4)
+numeros.push(5)
+say "Após push: " + numeros
+
+let ultimo = numeros.pop()
+say "Pop: " + ultimo
+say "Array final: " + numeros
+say "Tamanho: " + numeros.length
+
+say ""
+say "=== 2. STRINGS COM MÉTODOS ==="
+let nome = "Marcelino"
+say "Nome: " + nome
+say "Tamanho: " + nome.length
+say "Maiúsculo: " + nome.upper()
+say "Minúsculo: " + nome.lower()
+
+say ""
+say "=== 3. FUNÇÕES COM PARÂMETROS ==="
+func soma(a, b) {
+    return a + b
+}
+
+func multiplica(a, b) {
+    return a * b
+}
+
+say "Soma 10 + 20 = " + soma(10, 20)
+say "Multiplica 5 * 3 = " + multiplica(5, 3)
+
+say ""
+say "=== 4. OBJETOS ==="
+let usuario = {
+    nome: "Marcelino",
+    idade: 25,
+    cidade: "Luanda"
+}
+say "Nome: " + usuario.nome
+say "Idade: " + usuario.idade
+say "Cidade: " + usuario.cidade
+
+say ""
+say "=== 5. IMPORT ==="
+import "math"
+import "json"
+import "http"
+
+say ""
+say "✅ Teste completo finalizado!"

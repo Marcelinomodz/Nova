@@ -1,0 +1,72 @@
+// ============================================
+// CALCULADORA NOVA - by MARCELINO MODZ
+// ============================================
+
+say "╔═══════════════════════════════════════════╗"
+say "║                                           ║"
+say "║         CALCULADORA NOVA                  ║"
+say "║         by MARCELINO MODZ                 ║"
+say "╚═══════════════════════════════════════════╝"
+say ""
+
+// ============================================
+// 1. DECLARAR VARIÁVEIS
+// ============================================
+say "📊 DADOS DE ENTRADA:"
+let a = 50
+let b = 25
+say "a = " + a
+say "b = " + b
+say ""
+
+// ============================================
+// 2. OPERAÇÕES MATEMÁTICAS
+// ============================================
+say "📝 RESULTADOS:"
+
+// Soma
+let soma = a + b
+say "➕ Soma: " + a + " + " + b + " = " + soma
+
+// Subtração
+let subtracao = a - b
+say "➖ Subtração: " + a + " - " + b + " = " + subtracao
+
+// Multiplicação
+let multiplicacao = a * b
+say "✖️ Multiplicação: " + a + " * " + b + " = " + multiplicacao
+
+// Divisão
+let divisao = a / b
+say "➗ Divisão: " + a + " / " + b + " = " + divisao
+say ""
+
+// ============================================
+// 3. CONDIÇÃO - QUAL NÚMERO É MAIOR?
+// ============================================
+say "🔍 COMPARAÇÃO:"
+
+if a > b {
+    say a + " é maior que " + b
+} else {
+    if a < b {
+        say b + " é maior que " + a
+    } else {
+        say a + " é igual a " + b
+    }
+}
+say ""
+
+// ============================================
+// 4. LOOP DE 10 REPETIÇÕES
+// ============================================
+say "🔄 LOOP DE 10 REPETIÇÕES:"
+
+loop 10 {
+    let resultado = loop_index + 1
+    say "  Repetição " + resultado + " - Valor: " + (loop_index * 5)
+}
+
+say ""
+say "✅ CALCULADORA FINALIZADA!"
+say "🎉 by MARCELINO MODZ"
