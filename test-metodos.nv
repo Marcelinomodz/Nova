@@ -1,0 +1,27 @@
+say "=== Teste Métodos ==="
+
+let numeros = [1, 2, 3]
+say "Array: " + numeros
+
+// Teste push
+numeros.push(4)
+say "Após push: " + numeros
+
+// Teste pop
+let ultimo = numeros.pop()
+say "Pop: " + ultimo
+say "Array final: " + numeros
+
+// Teste length
+say "Tamanho: " + numeros.length
+
+say ""
+say "=== Teste Strings ==="
+let nome = "Marcelino"
+say "Nome: " + nome
+say "Tamanho: " + nome.length
+say "Maiúsculo: " + nome.upper
+say "Minúsculo: " + nome.lower
+
+say ""
+say "✅ Teste concluído!"

@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+// Gerenciador de pacotes para Nova
+console.log("📦 Nova Package Manager v1.0.0")
+console.log("Usage: novapm install <package>")

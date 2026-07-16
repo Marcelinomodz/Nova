@@ -1,0 +1,3 @@
+// Módulo JSON
+func parse(text) { return text }
+func stringify(obj) { return obj }

@@ -11,7 +11,6 @@
 
 using namespace std;
 
-// Token Types
 enum TokenType {
     TOKEN_SAY, TOKEN_LET, TOKEN_IF, TOKEN_ELSE, TOKEN_LOOP,
     TOKEN_FUNC, TOKEN_RETURN, TOKEN_IMPORT, TOKEN_IDENTIFIER,
@@ -21,7 +20,9 @@ enum TokenType {
     TOKEN_DIVIDE, TOKEN_EQ, TOKEN_NEQ, TOKEN_LT, TOKEN_GT,
     TOKEN_LTE, TOKEN_GTE, TOKEN_AND, TOKEN_OR, TOKEN_NOT,
     TOKEN_TRUE, TOKEN_FALSE, TOKEN_COMMA, TOKEN_DOT,
-    TOKEN_COLON, TOKEN_EOF, TOKEN_UNKNOWN
+    TOKEN_COLON, TOKEN_BREAK, TOKEN_CONTINUE,
+    TOKEN_FOR, TOKEN_FOREACH, TOKEN_IN, TOKEN_SEMICOLON,
+    TOKEN_EOF, TOKEN_UNKNOWN
 };
 
 struct Token {
@@ -31,7 +32,6 @@ struct Token {
     int col;
 };
 
-// Lexer (mesmo código)
 class Lexer {
 private:
     string source;
@@ -57,11 +57,7 @@ public:
             char c = peek();
             
             if (isWhitespace(c)) { advance(); continue; }
-            
-            if (c == '/' && peekNext() == '/') {
-                while (peek() != '\n' && pos < source.length()) advance();
-                continue;
-            }
+            if (c == '/' && peekNext() == '/') { while (peek() != '\n' && pos < source.length()) advance(); continue; }
             
             if (isDigit(c)) {
                 string value = "";
@@ -102,6 +98,11 @@ public:
                 else if (value == "import") type = TOKEN_IMPORT;
                 else if (value == "true") type = TOKEN_TRUE;
                 else if (value == "false") type = TOKEN_FALSE;
+                else if (value == "break") type = TOKEN_BREAK;
+                else if (value == "continue") type = TOKEN_CONTINUE;
+                else if (value == "for") type = TOKEN_FOR;
+                else if (value == "foreach") type = TOKEN_FOREACH;
+                else if (value == "in") type = TOKEN_IN;
                 
                 tokens.push_back({type, value, startLine, startCol});
                 continue;
@@ -132,6 +133,7 @@ public:
                 case ',': advance(); tokens.push_back({TOKEN_COMMA, ",", startLine, startCol}); break;
                 case '.': advance(); tokens.push_back({TOKEN_DOT, ".", startLine, startCol}); break;
                 case ':': advance(); tokens.push_back({TOKEN_COLON, ":", startLine, startCol}); break;
+                case ';': advance(); tokens.push_back({TOKEN_SEMICOLON, ";", startLine, startCol}); break;
                 default: advance(); tokens.push_back({TOKEN_UNKNOWN, string(1, c), startLine, startCol});
             }
         }
@@ -141,7 +143,6 @@ public:
     }
 };
 
-// Interpreter
 class Interpreter {
 private:
     map<string, string> variables;
@@ -149,11 +150,12 @@ private:
     map<string, map<string, string>> objects;
     map<string, vector<string>> funcParams;
     map<string, vector<Token>> funcBody;
-    map<string, string> modules;
     vector<string> output;
     int loopIndex;
     string returnValue;
     bool inFunctionCall;
+    bool breakLoop;
+    bool continueLoop;
     
     string getValue(const string& name) {
         if (variables.find(name) != variables.end()) {
@@ -257,7 +259,10 @@ private:
         return result;
     }
     
-    string evaluateExpression(const vector<Token>& tokens, int& pos, int loopIdx = -1) {
+    // ============================================================
+    // FUNÇÃO PRINCIPAL DE AVALIAÇÃO
+    // ============================================================
+    string evaluateExpression(vector<Token>& tokens, int& pos, int loopIdx = -1) {
         string result = "";
         
         if (pos >= tokens.size()) return "";
@@ -276,90 +281,74 @@ private:
             pos++;
         } else if (tokens[pos].type == TOKEN_IDENTIFIER) {
             string varName = tokens[pos].value;
-            
-            if (varName == "loop_index" && loopIdx >= 0) {
-                result = to_string(loopIdx);
-            } else if (arrays.find(varName) != arrays.end()) {
-                result = getArrayString(varName);
-            } else if (objects.find(varName) != objects.end()) {
-                result = varName;
-            } else {
-                result = getValue(varName);
-            }
             pos++;
             
-            // Verifica se é acesso a objeto: objeto.propriedade
-            if (pos < tokens.size() && tokens[pos].type == TOKEN_DOT) {
+            // Verifica se é acesso a array ou método
+            if (pos < tokens.size() && tokens[pos].type == TOKEN_LBRACKET) {
+                // array[0]
                 pos++;
-                if (pos < tokens.size() && tokens[pos].type == TOKEN_IDENTIFIER) {
-                    string propName = tokens[pos].value;
+                string indexStr = evaluateExpression(tokens, pos, loopIdx);
+                if (pos < tokens.size() && tokens[pos].type == TOKEN_RBRACKET) {
                     pos++;
-                    string objName = result;
-                    result = getObjectProperty(objName, propName);
-                }
-            }
-            
-            // Chamada de função: nome(args)
-            if (pos < tokens.size() && tokens[pos].type == TOKEN_LPAREN) {
-                pos++;
-                vector<string> args;
-                while (pos < tokens.size() && tokens[pos].type != TOKEN_RPAREN) {
-                    if (tokens[pos].type == TOKEN_COMMA) {
-                        pos++;
-                        continue;
+                    if (arrays.find(varName) != arrays.end() && isNumber(indexStr)) {
+                        int idx = stoi(indexStr);
+                        if (idx >= 0 && idx < (int)arrays[varName].size()) {
+                            result = arrays[varName][idx];
+                        } else {
+                            result = "null";
+                        }
+                    } else {
+                        result = "null";
                     }
-                    int tempPos = pos;
-                    string arg = evaluateExpression(tokens, tempPos, loopIdx);
-                    pos = tempPos;
-                    args.push_back(arg);
                 }
-                if (pos < tokens.size() && tokens[pos].type == TOKEN_RPAREN) {
-                    pos++;
-                }
-                result = executeFunction(varName, args);
-            }
-            
-            // Métodos de array: array.push(), array.pop(), array.length
-            if (pos < tokens.size() && tokens[pos].type == TOKEN_DOT) {
+            } else if (pos < tokens.size() && tokens[pos].type == TOKEN_DOT) {
+                // objeto.metodo ou objeto.propriedade
                 pos++;
                 if (pos < tokens.size() && tokens[pos].type == TOKEN_IDENTIFIER) {
                     string method = tokens[pos].value;
                     pos++;
                     
-                    string arrayName = varName;
-                    if (arrays.find(arrayName) != arrays.end()) {
-                        if (method == "push") {
-                            if (pos < tokens.size() && tokens[pos].type == TOKEN_LPAREN) {
+                    // Verifica se é método (tem parênteses)
+                    bool isMethod = false;
+                    if (pos < tokens.size() && tokens[pos].type == TOKEN_LPAREN) {
+                        isMethod = true;
+                        pos++;
+                    }
+                    
+                    // ============================================================
+                    // MÉTODOS DE ARRAY
+                    // ============================================================
+                    if (arrays.find(varName) != arrays.end()) {
+                        if (method == "push" && isMethod) {
+                            string value = evaluateExpression(tokens, pos, loopIdx);
+                            if (pos < tokens.size() && tokens[pos].type == TOKEN_RPAREN) {
                                 pos++;
-                                string value = evaluateExpression(tokens, pos, loopIdx);
-                                if (pos < tokens.size() && tokens[pos].type == TOKEN_RPAREN) {
-                                    pos++;
-                                    arrays[arrayName].push_back(value);
-                                    variables[arrayName] = "[array]";
-                                    result = getArrayString(arrayName);
-                                }
                             }
-                        } else if (method == "pop") {
-                            if (pos < tokens.size() && tokens[pos].type == TOKEN_LPAREN) {
+                            arrays[varName].push_back(value);
+                            variables[varName] = "[array]";
+                            result = getArrayString(varName);
+                        } else if (method == "pop" && isMethod) {
+                            if (pos < tokens.size() && tokens[pos].type == TOKEN_RPAREN) {
                                 pos++;
-                                if (pos < tokens.size() && tokens[pos].type == TOKEN_RPAREN) {
-                                    pos++;
-                                    if (!arrays[arrayName].empty()) {
-                                        result = arrays[arrayName].back();
-                                        arrays[arrayName].pop_back();
-                                        variables[arrayName] = "[array]";
-                                    } else {
-                                        result = "null";
-                                    }
-                                }
                             }
-                        } else if (method == "length" || method == "length()") {
-                            result = to_string(arrays[arrayName].size());
+                            if (!arrays[varName].empty()) {
+                                result = arrays[varName].back();
+                                arrays[varName].pop_back();
+                                variables[varName] = "[array]";
+                            } else {
+                                result = "null";
+                            }
+                        } else if (method == "length") {
+                            result = to_string(arrays[varName].size());
+                        } else {
+                            result = getObjectProperty(varName, method);
                         }
                     }
-                    // Métodos de string
-                    else if (variables.find(arrayName) != variables.end()) {
-                        string str = variables[arrayName];
+                    // ============================================================
+                    // MÉTODOS DE STRING
+                    // ============================================================
+                    else if (variables.find(varName) != variables.end()) {
+                        string str = variables[varName];
                         if (method == "length") {
                             result = to_string(str.length());
                         } else if (method == "upper") {
@@ -370,28 +359,27 @@ private:
                             string lower = str;
                             transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
                             result = lower;
-                        }
-                    }
-                }
-            }
-            
-            // Acesso a array: array[0]
-            if (pos < tokens.size() && tokens[pos].type == TOKEN_LBRACKET) {
-                pos++;
-                string indexStr = evaluateExpression(tokens, pos, loopIdx);
-                if (pos < tokens.size() && tokens[pos].type == TOKEN_RBRACKET) {
-                    pos++;
-                    string arrayName = varName;
-                    if (arrays.find(arrayName) != arrays.end() && isNumber(indexStr)) {
-                        int idx = stoi(indexStr);
-                        if (idx >= 0 && idx < (int)arrays[arrayName].size()) {
-                            result = arrays[arrayName][idx];
                         } else {
                             result = "null";
                         }
-                    } else {
-                        result = "null";
                     }
+                    // ============================================================
+                    // OBJETO
+                    // ============================================================
+                    else {
+                        result = getObjectProperty(varName, method);
+                    }
+                }
+            } else {
+                // Variável normal
+                if (varName == "loop_index" && loopIdx >= 0) {
+                    result = to_string(loopIdx);
+                } else if (arrays.find(varName) != arrays.end()) {
+                    result = getArrayString(varName);
+                } else if (objects.find(varName) != objects.end()) {
+                    result = varName;
+                } else {
+                    result = getValue(varName);
                 }
             }
         } else if (tokens[pos].type == TOKEN_LPAREN) {
@@ -404,7 +392,9 @@ private:
             return "";
         }
         
-        // Processa operadores
+        // ============================================================
+        // OPERADORES
+        // ============================================================
         while (pos < tokens.size()) {
             if (tokens[pos].type == TOKEN_PLUS) {
                 pos++;
@@ -499,9 +489,9 @@ private:
     }
 
 public:
-    Interpreter() : loopIndex(0), returnValue(""), inFunctionCall(false) {}
+    Interpreter() : loopIndex(0), returnValue(""), inFunctionCall(false), breakLoop(false), continueLoop(false) {}
     
-    void execute(const vector<Token>& tokens) {
+    void execute(vector<Token>& tokens) {
         int i = 0;
         
         while (i < tokens.size()) {
@@ -606,11 +596,21 @@ public:
                 
                 if (i < tokens.size() && tokens[i].type == TOKEN_LBRACE) {
                     i++;
-                    for (int loop = 0; loop < count; loop++) {
+                    breakLoop = false;
+                    for (int loop = 0; loop < count && !breakLoop; loop++) {
                         int bodyPos = i;
                         loopIndex = loop;
-                        while (bodyPos < tokens.size() && tokens[bodyPos].type != TOKEN_RBRACE) {
-                            if (tokens[bodyPos].type == TOKEN_SAY) {
+                        continueLoop = false;
+                        while (bodyPos < tokens.size() && tokens[bodyPos].type != TOKEN_RBRACE && !breakLoop) {
+                            if (tokens[bodyPos].type == TOKEN_BREAK) {
+                                breakLoop = true;
+                                bodyPos++;
+                                break;
+                            } else if (tokens[bodyPos].type == TOKEN_CONTINUE) {
+                                continueLoop = true;
+                                bodyPos++;
+                                break;
+                            } else if (tokens[bodyPos].type == TOKEN_SAY) {
                                 bodyPos++;
                                 if (bodyPos < tokens.size()) {
                                     int tempPos = bodyPos;
@@ -622,6 +622,63 @@ public:
                             } else {
                                 bodyPos++;
                             }
+                        }
+                        if (continueLoop) continue;
+                    }
+                    while (i < tokens.size() && tokens[i].type != TOKEN_RBRACE) i++;
+                    if (i < tokens.size()) i++;
+                }
+            }
+            else if (token.type == TOKEN_FOREACH) {
+                i++;
+                string itemVar = "";
+                string arrayName = "";
+                
+                if (i < tokens.size() && tokens[i].type == TOKEN_IDENTIFIER) {
+                    itemVar = tokens[i].value;
+                    i++;
+                }
+                if (i < tokens.size() && tokens[i].type == TOKEN_IN) {
+                    i++;
+                }
+                if (i < tokens.size() && tokens[i].type == TOKEN_IDENTIFIER) {
+                    arrayName = tokens[i].value;
+                    i++;
+                }
+                
+                if (i < tokens.size() && tokens[i].type == TOKEN_LBRACE) {
+                    i++;
+                    if (arrays.find(arrayName) != arrays.end()) {
+                        vector<string>& arr = arrays[arrayName];
+                        breakLoop = false;
+                        for (size_t idx = 0; idx < arr.size() && !breakLoop; idx++) {
+                            variables[itemVar] = arr[idx];
+                            loopIndex = idx;
+                            int bodyPos = i;
+                            continueLoop = false;
+                            while (bodyPos < tokens.size() && tokens[bodyPos].type != TOKEN_RBRACE && !breakLoop) {
+                                if (tokens[bodyPos].type == TOKEN_BREAK) {
+                                    breakLoop = true;
+                                    bodyPos++;
+                                    break;
+                                } else if (tokens[bodyPos].type == TOKEN_CONTINUE) {
+                                    continueLoop = true;
+                                    bodyPos++;
+                                    break;
+                                } else if (tokens[bodyPos].type == TOKEN_SAY) {
+                                    bodyPos++;
+                                    if (bodyPos < tokens.size()) {
+                                        int tempPos = bodyPos;
+                                        string result = evaluateExpression(tokens, tempPos, loopIndex);
+                                        bodyPos = tempPos;
+                                        cout << result << endl;
+                                        output.push_back(result);
+                                    }
+                                } else {
+                                    bodyPos++;
+                                }
+                            }
+                            if (continueLoop) continue;
                         }
                     }
                     while (i < tokens.size() && tokens[i].type != TOKEN_RBRACE) i++;
@@ -734,10 +791,16 @@ public:
                         module = tokens[i].value;
                         i++;
                     }
-                    modules[module] = "loaded";
                     cout << "📦 Importando módulo: " << module << endl;
                     output.push_back("import: " + module);
                 }
+            }
+            else if (token.type == TOKEN_BREAK) {
+                cerr << "⚠️  'break' fora de loop na linha " << token.line << endl;
+                i++;
+            } else if (token.type == TOKEN_CONTINUE) {
+                cerr << "⚠️  'continue' fora de loop na linha " << token.line << endl;
+                i++;
             }
             else {
                 i++;
@@ -760,7 +823,7 @@ int main(int argc, char* argv[]) {
     cout << "║    ██║ ╚████║╚██████╔╝ ╚████╔╝ ██║  ██║  ║" << endl;
     cout << "║    ╚═╝  ╚═══╝ ╚═════╝   ╚═══╝  ╚═╝  ╚═╝  ║" << endl;
     cout << "║                                           ║" << endl;
-    cout << "║         Nova Language v0.6.0              ║" << endl;
+    cout << "║         Nova Language v1.0.0              ║" << endl;
     cout << "║         by MARCELINO MODZ                 ║" << endl;
     cout << "╚═══════════════════════════════════════════╝" << endl;
     cout << endl;
@@ -775,13 +838,16 @@ int main(int argc, char* argv[]) {
     string arg = argv[1];
     
     if (arg == "--help") {
-        cout << "Nova Language v0.6.0 by MARCELINO MODZ" << endl;
+        cout << "Nova Language v1.0.0 by MARCELINO MODZ" << endl;
         cout << "Usage: nova <file.nv> [options]" << endl;
+        cout << "Options:" << endl;
+        cout << "  --help     Show this help" << endl;
+        cout << "  --version  Show version" << endl;
         return 0;
     }
     
     if (arg == "--version") {
-        cout << "Nova Language v0.6.0 by MARCELINO MODZ" << endl;
+        cout << "Nova Language v1.0.0 by MARCELINO MODZ" << endl;
         return 0;
     }
     

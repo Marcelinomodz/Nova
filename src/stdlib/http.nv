@@ -1,0 +1,3 @@
+// Módulo HTTP
+func get(url) { return "GET " + url }
+func post(url, data) { return "POST " + url + " " + data }
